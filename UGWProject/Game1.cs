@@ -289,6 +289,34 @@ namespace UGWProject
             }
         }
 
+        protected void DetectCollison()
+        {
+            if (paulPlayer.ObjRect.Bottom >= ground.ObjRect.Top)
+            {
+                hasJumped = false;
+                //need to make hasjumped = false in the collision method
+                paulPlayer.ObjRect = new Rectangle((int)playerPos.X, ground.ObjRect.Top - paulPlayer.ObjRect.Height, paulPlayer.ObjRect.Width, paulPlayer.ObjRect.Height);
+                playerPos += velocity;
+                playerPos = new Vector2(paulPlayer.ObjRect.X, paulPlayer.ObjRect.Y);
+                velocity.Y = 0f;
+            }
+
+            if (paulPlayer.ObjRect.Left <= sideL.ObjRect.Right)
+            {
+                paulPlayer.ObjRect = new Rectangle(sideL.ObjRect.Right, (int)playerPos.Y, paulPlayer.ObjRect.Width, paulPlayer.ObjRect.Height);
+                playerPos += velocity;
+                playerPos = new Vector2(paulPlayer.ObjRect.X, paulPlayer.ObjRect.Y);
+            }
+
+            if (paulPlayer.ObjRect.Right >= sideR.ObjRect.Left)
+            {
+                paulPlayer.ObjRect = new Rectangle(sideR.ObjRect.Left - paulPlayer.ObjRect.Width, (int)playerPos.Y, paulPlayer.ObjRect.Width, paulPlayer.ObjRect.Height);
+                playerPos += velocity;
+                playerPos = new Vector2(paulPlayer.ObjRect.X, paulPlayer.ObjRect.Y);
+            }
+                    
+        }
+
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
         /// all content.
@@ -310,6 +338,8 @@ namespace UGWProject
 
             // TODO: Add your update logic here
             ProcessInput();
+            DetectCollison();
+            
             //the enemy classes .Move() method will go in here. 
             //there will also need to be a collision that changes the direction of the enemy hits an object
             //or is about to fall  off the edge.
@@ -335,15 +365,7 @@ namespace UGWProject
             spriteBatch.Draw(sideR.GameTexture, sideR.ObjRect, Color.White);
             spriteBatch.Draw(ceiling.GameTexture, ceiling.ObjRect, Color.White);
             spriteBatch.Draw(paulPlayer.GameTexture, paulPlayer.ObjRect, Color.White);
-
-
-            if(paulPlayer.ObjRect.Bottom > ground.ObjRect.Y)
-            {
-                Rectangle temp = paulPlayer.ObjRect;
-                temp.Y = ground.ObjRect.Top + paulPlayer.ObjRect.Height;
-                paulPlayer.ObjRect = temp;
-                hasJumped = false;
-            }
+            
             if (paulPlayer.IsDead == true)
             {
                 spriteBatch.Draw(paulGhost, paulPlayer.ObjRect, Color.White);
